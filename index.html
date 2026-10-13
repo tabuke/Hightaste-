@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#10251d">
+<meta name="description" content="HIGHTASTE Farm Intelligence — Farmer registration, farm mapping, field operations and payment management.">
+<title>HIGHTASTE | Farm Intelligence</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/lucide@0.468.0/dist/umd/lucide.min.js"></script>
+
+<style>
+:root {
+  --forest:#10251d;
+  --forest2:#18392c;
+  --green:#16845b;
+  --green-light:#e5f5ec;
+  --lime:#d5f36a;
+  --bg:#f5f7f5;
+  --white:#ffffff;
+  --text:#18251f;
+  --muted:#7a8980;
+  --border:#e6ebe7;
+  --red:#d94f4f;
+  --amber:#bd8424;
+  --shadow:0 5px 24px rgba(16,37,29,.045);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:"DM Sans",sans-serif;font-size:14px}
+button,input,select,textarea{font:inherit}
+button{cursor:pointer}
+button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible{outline:3px solid #a8d8bd;outline-offset:2px}
+.layout{display:flex;min-height:100vh}
+.sidebar{width:255px;background:var(--forest);color:white;position:fixed;inset:0 auto 0 0;display:flex;flex-direction:column;padding:25px 17px;z-index:20;overflow-y:auto}
+.brand{display:flex;gap:12px;align-items:center;padding:0 9px 28px;border-bottom:1px solid #ffffff17}
+.brand-icon{width:43px;height:43px;border-radius:13px;background:var(--lime);color:var(--forest);display:grid;place-items:center;font-size:23px;font-weight:900}
+.brand-name{font:800 20px Manrope,sans-serif;letter-spacing:-.7px}
+.brand-sub{font-size:10px;color:#9eafa5;letter-spacing:1.6px;margin-top:3px}
+.workspace{margin:20px 4px 23px;background:#ffffff0b;border:1px solid #ffffff12;border-radius:12px;padding:12px}
+.workspace-label{font-size:10px;letter-spacing:1.2px;color:#9eafa5;text-transform:uppercase;margin-bottom:8px}
+.workspace-name{display:flex;align-items:center;gap:8px;font-weight:600}
+.online-dot{width:8px;height:8px;border-radius:50%;background:#a9df69;display:inline-block}
+.nav-label{font-size:10px;letter-spacing:1.6px;color:#83978b;padding:0 12px;margin:15px 0 9px}
+.nav-btn{border:0;width:100%;display:flex;align-items:center;gap:13px;text-align:left;padding:12px 13px;background:transparent;color:#b9c7bf;border-radius:9px;margin:2px 0;transition:.2s}
+.nav-btn:hover{background:#ffffff0c;color:white}
+.nav-btn.active{background:#d5f36a;color:#183226;font-weight:700}
+.nav-btn svg{width:18px;height:18px}
+.nav-badge{margin-left:auto;background:#ffffff18;padding:3px 7px;border-radius:6px;font-size:10px}
+.sidebar-bottom{margin-top:auto;padding-top:20px}
+.user-mini{display:flex;align-items:center;gap:11px;padding:14px 7px 0;border-top:1px solid #ffffff18}
+.avatar{width:38px;height:38px;display:grid;place-items:center;border-radius:12px;background:#d5f36a;color:#10251d;font-weight:800}
+.user-name{font-size:12px;font-weight:700}
+.user-role{font-size:11px;color:#9eafa5;margin-top:4px}
+.main{width:calc(100% - 255px);margin-left:255px;min-width:0}
+.topbar{height:77px;background:#ffffff;border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 35px;position:sticky;top:0;z-index:10}
+.breadcrumb{color:var(--muted);font-size:12px}
+.breadcrumb strong{color:var(--text)}
+.top-actions{display:flex;align-items:center;gap:12px}
+.icon-btn{border:1px solid var(--border);background:white;width:39px;height:39px;border-radius:10px;display:grid;place-items:center;color:#536259}
+.icon-btn svg{width:18px;height:18px}
+.top-avatar{width:37px;height:37px;border-radius:11px;background:#e3efe6;display:grid;place-items:center;color:var(--green);font-weight:800}
+.content{padding:32px 35px 50px;max-width:1650px;margin:auto}
+.page{display:none;animation:fade .2s ease}
+.page.active{display:block}
+@keyframes fade{from{opacity:.5;transform:translateY(4px)}to{opacity:1;transform:none}}
+.page-heading{display:flex;align-items:flex-start;justify-content:space-between;gap:18px;margin-bottom:27px}
+.eyebrow{font-size:10px;letter-spacing:1.8px;font-weight:800;color:var(--green);text-transform:uppercase;margin-bottom:9px}
+h1{font:800 clamp(24px,2.5vw,31px) Manrope,sans-serif;letter-spacing:-1.2px;margin:0}
+.page-desc{color:var(--muted);margin:8px 0 0;line-height:1.6}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:8px;border:1px solid transparent;border-radius:9px;padding:11px 15px;font-weight:700;font-size:12px;transition:.18s;text-decoration:none}
+.btn svg{width:16px;height:16px}
+.btn-primary{background:var(--forest);color:white}
+.btn-primary:hover{background:var(--green);transform:translateY(-1px)}
+.btn-secondary{background:white;border-color:var(--border);color:var(--text)}
+.btn-secondary:hover{border-color:var(--green);color:var(--green)}
+.btn-lime{background:var(--lime);color:var(--forest)}
+.btn-danger{background:#fff0f0;color:var(--red);border-color:#f7dddd}
+.btn-small{padding:7px 10px;font-size:11px}
+.hero{background:var(--forest);border-radius:17px;padding:30px 32px;color:white;display:flex;align-items:center;justify-content:space-between;gap:25px;position:relative;overflow:hidden;margin-bottom:24px}
+.hero:after{content:"";position:absolute;width:260px;height:260px;border:1px solid #ffffff16;border-radius:50%;right:100px;top:-130px;box-shadow:0 0 0 35px #ffffff08,0 0 0 70px #ffffff05;pointer-events:none}
+.hero-copy{position:relative;z-index:1}
+.hero-tag{display:inline-flex;align-items:center;gap:7px;color:var(--lime);font-size:10px;font-weight:800;letter-spacing:1.6px;text-transform:uppercase;margin-bottom:15px}
+.hero h2{font:800 clamp(22px,3vw,32px) Manrope,sans-serif;letter-spacing:-1px;max-width:570px;line-height:1.25;margin:0}
+.hero p{color:#b5c7bc;line-height:1.7;max-width:540px;margin:12px 0 20px}
+.hero-actions{display:flex;gap:10px;flex-wrap:wrap}
+.hero-art{width:130px;height:130px;border-radius:30px;background:#ffffff0c;border:1px solid #ffffff20;display:grid;place-items:center;flex-shrink:0;transform:rotate(-8deg);position:relative;z-index:1}
+.hero-art svg{width:64px;height:64px;color:var(--lime);stroke-width:1.3}
+.metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:16px;margin-bottom:24px}
+.metric{background:white;border:1px solid var(--border);border-radius:13px;padding:20px;box-shadow:var(--shadow);min-width:0}
+.metric-top{display:flex;align-items:center;justify-content:space-between;gap:10px}
+.metric-label{font-size:12px;color:var(--muted);font-weight:600}
+.metric-icon{width:38px;height:38px;border-radius:11px;background:var(--green-light);display:grid;place-items:center;color:var(--green)}
+.metric-icon svg{width:19px;height:19px}
+.metric-value{font:800 clamp(22px,2.5vw,29px) Manrope,sans-serif;letter-spacing:-1px;margin:16px 0 7px;overflow-wrap:anywhere}
+.metric-foot{font-size:11px;color:var(--muted)}
+.metric-foot strong{color:var(--green)}
+.grid-2{display:grid;grid-template-columns:minmax(0,1.4fr) minmax(0,1fr);gap:20px;margin-bottom:22px}
+.card{background:white;border:1px solid var(--border);border-radius:14px;box-shadow:var(--shadow);min-width:0}
+.card-header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:20px 22px;border-bottom:1px solid var(--border)}
+.card-title{font:800 14px Manrope,sans-serif}
+.card-subtitle{font-size:11px;color:var(--muted);margin-top:5px}
+.card-body{padding:21px 22px}
+.text-link{background:none;border:0;color:var(--green);font-size:11px;font-weight:800}
+.activity{display:flex;gap:12px;align-items:flex-start;padding:13px 0;border-bottom:1px solid #edf0ed}
+.activity:last-child{border:0;padding-bottom:0}
+.activity-icon{width:35px;height:35px;flex-shrink:0;display:grid;place-items:center;border-radius:10px;background:#edf7ef;color:var(--green)}
+.activity-icon svg{width:17px;height:17px}
+.activity-title{font-size:12px;font-weight:700}
+.activity-meta{font-size:11px;color:var(--muted);margin-top:5px;line-height:1.5}
+.status{display:inline-flex;align-items:center;gap:6px;border-radius:20px;padding:6px 9px;font-size:10px;font-weight:800;white-space:nowrap}
+.status:before{content:"";width:6px;height:6px;background:currentColor;border-radius:50%}
+.status-approved,.status-paid{background:#e5f5ec;color:#16845b}
+.status-pending,.status-processing{background:#fff4dc;color:#a16c11}
+.status-rejected,.status-failed{background:#ffeded;color:#ca4242}
+.status-notpaid{background:#eef0f2;color:#69746d}
+.progress-row{margin:17px 0}
+.progress-info{display:flex;justify-content:space-between;gap:10px;font-size:11px;margin-bottom:8px}
+.progress-info span{color:var(--muted)}
+.progress-track{height:7px;background:#edf0ed;border-radius:10px;overflow:hidden}
+.progress-fill{height:100%;border-radius:10px;background:var(--green)}
+.toolbar{display:flex;justify-content:space-between;align-items:center;gap:12px;flex-wrap:wrap;padding:17px 20px;border-bottom:1px solid var(--border)}
+.toolbar-left,.toolbar-right{display:flex;align-items:center;gap:9px;flex-wrap:wrap}
+.searchbox{display:flex;align-items:center;gap:8px;border:1px solid var(--border);background:white;border-radius:9px;padding:0 11px;min-width:230px}
+.searchbox svg{width:16px;height:16px;color:var(--muted)}
+.searchbox input{width:100%;border:0;outline:none;padding:10px 0;min-width:0;background:transparent}
+.searchbox input:focus-visible{outline:none}
+.select{border:1px solid var(--border);border-radius:9px;background:white;padding:10px 12px;color:var(--text);max-width:100%}
+.table-wrap{overflow-x:auto;width:100%}
+table{width:100%;border-collapse:collapse;text-align:left;white-space:nowrap}
+th{padding:13px 20px;background:#fafbfa;color:#8b978f;font-size:10px;text-transform:uppercase;letter-spacing:.8px;font-weight:800;border-bottom:1px solid var(--border)}
+td{padding:15px 20px;border-bottom:1px solid #eef1ee;font-size:12px}
+tbody tr:hover{background:#fafcf9}
+tbody tr:last-child td{border-bottom:0}
+.person{display:flex;align-items:center;gap:10px}
+.person-avatar{width:34px;height:34px;border-radius:10px;background:#e9f2eb;color:var(--green);display:grid;place-items:center;font-weight:800;font-size:11px}
+.person-name{font-weight:700}
+.person-id{font-size:10px;color:var(--muted);margin-top:4px}
+.action-row{display:flex;gap:6px}
+.table-action{width:30px;height:30px;border:1px solid var(--border);background:white;border-radius:8px;display:grid;place-items:center;color:#65756a}
+.table-action:hover{border-color:var(--green);color:var(--green)}
+.table-action svg{width:14px;height:14px}
+.empty{text-align:center;color:var(--muted);padding:35px 15px}
+.form-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:17px}
+.field{display:flex;flex-direction:column;gap:7px;min-width:0}
+.field.full{grid-column:1/-1}
+.field label{font-size:11px;font-weight:800;color:#48574e}
+.field input,.field select,.field textarea{width:100%;padding:12px;border:1px solid #dfe7e0;border-radius:9px;background:white;outline:none;min-width:0;color:var(--text)}
+.field input:focus,.field select:focus,.field textarea:focus{border-color:var(--green);box-shadow:0 0 0 3px #16845b13}
+.field textarea{min-height:95px;resize:vertical}
+.field-help{font-size:10px;color:var(--muted);line-height:1.5}
+.form-actions{display:flex;justify-content:flex-end;gap:9px;margin-top:23px;padding-top:18px;border-top:1px solid var(--border)}
+.section-title{font:800 17px Manrope,sans-serif;margin:0 0 6px}
+.section-desc{color:var(--muted);font-size:12px;line-height:1.6;margin:0 0 23px}
+.settings-list{display:grid;gap:12px}
+.setting-row{display:flex;align-items:center;justify-content:space-between;gap:15px;border:1px solid var(--border);border-radius:11px;padding:16px}
+.setting-title{font-weight:700;font-size:12px}
+.setting-desc{color:var(--muted);font-size:11px;margin-top:5px;line-height:1.5}
+.notice{padding:13px 15px;border-radius:9px;background:#edf7ef;color:#285a3d;font-size:12px;line-height:1.6;margin-bottom:20px}
+.notice.warning{background:#fff4dc;color:#795719}
+.switch{position:relative;width:40px;height:23px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.slider{position:absolute;inset:0;background:#cdd5ce;border-radius:20px;cursor:pointer;transition:.2s}
+.slider:before{content:"";position:absolute;width:17px;height:17px;left:3px;top:3px;background:white;border-radius:50%;transition:.2s}
+.switch input:checked+.slider{background:var(--green)}
+.switch input:checked+.slider:before{transform:translateX(17px)}
+.footer{font-size:10px;color:#98a39b;text-align:center;padding:26px 0 0}
+.toast{position:fixed;bottom:24px;right:24px;z-index:100;background:var(--forest);color:white;padding:14px 18px;border-radius:11px;box-shadow:0 10px 35px #10251d30;max-width:min(370px,calc(100vw - 32px));display:none;line-height:1.5;font-size:12px}
+.toast.show{display:block;animation:fade .2s}
+.modal-backdrop{position:fixed;inset:0;background:#10251d80;display:none;align-items:center;justify-content:center;padding:18px;z-index:50}
+.modal-backdrop.open{display:flex}
+.modal{width:min(650px,100%);max-height:90vh;overflow:auto;background:white;border-radius:16px;box-shadow:0 20px 80px #0003}
+.modal-header{display:flex;justify-content:space-between;align-items:center;padding:19px 22px;border-bottom:1px solid var(--border)}
+.modal-header h3{font:800 16px Manrope,sans-serif;margin:0}
+.modal-content{padding:22px}
+.mobile-menu{display:none}
+.file-label{display:inline-flex;align-items:center;gap:8px;cursor:pointer}
+.map-placeholder{min-height:240px;background:linear-gradient(135deg,#e8f1e6,#f6f8ee);display:flex;align-items:center;justify-content:center;text-align:center;padding:25px;border-radius:12px;color:#476b51}
+.map-placeholder svg{width:36px;height:36px}
+.map-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.map-stat{border:1px solid var(--border);border-radius:11px;padding:16px}
+.map-stat strong{font:800 23px Manrope,sans-serif;display:block;margin-top:9px}
+.map-stat span{color:var(--muted);font-size:11px}
+@media(max-width:1150px){
+ .metrics{grid-template-columns:repeat(2,minmax(0,1fr))}
+ .content{padding:25px 22px 40px}
+ .topbar{padding:0 22px}
+ .hero-art{width:100px;height:100px}
+}
+@media(max-width:800px){
+ .sidebar{transform:translateX(-100%);transition:transform .25s;width:260px;box-shadow:15px 0 40px #0001}
+ .sidebar.open{transform:translateX(0)}
+ .main{width:100%;margin-left:0}
+ .mobile-menu{display:grid}
+ .topbar{height:66px;padding:0 16px}
+ .content{padding:22px 15px 35px}
+ .hero{padding:23px 20px}
+ .hero-art{display:none}
+ .grid-2{grid-template-columns:1fr}
+ .page-heading{align-items:flex-start}
+ .page-heading>.btn{padding:10px;font-size:11px}
+ .searchbox{min-width:100%}
+ .toolbar-left,.toolbar-right{width:100%}
+ .toolbar-right .btn{flex:1}
+ .map-grid{grid-template-columns:1fr}
+}
+@media(max-width:480px){
+ .metrics{grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+ .metric{padding:14px}
+ .metric-value{font-size:22px}
+ .metric-label{font-size:10px}
+ .metric-icon{width:32px;height:32px}
+ .page-heading{flex-direction:column}
+ .form-grid{grid-template-columns:1fr}
+ .field.full{grid-column:auto}
+ .hero h2{font-size:23px}
+ .hero p{font-size:12px}
+ .top-actions{gap:7px}
+ .breadcrumb{font-size:11px}
+ .card-header,.card-body{padding:16px}
+ .setting-row{align-items:flex-start}
+}
+@media print{
+ .sidebar,.topbar,.no-print,.page-heading .btn,.toolbar,.action-row,.footer{display:none!important}
+ .main{width:100%;margin:0}
+ .content{padding:0}
+ .page{display:none!important}
+ .page.active{display:block!important}
+ body{background:white}
+ .card,.metric{box-shadow:none;break-inside:avoid}
+}
+</style>
+</head>
+
+<body>
+<div class="layout">
+<aside class="sidebar" id="sidebar">
+  <div class="brand">
+    <div class="brand-icon">H</div>
+    <div>
+      <div class="brand-name">HIGHTASTE</div>
+      <div class="brand-sub">FARM INTELLIGENCE</div>
+    </div>
+  </div>
+
+  <div class="workspace">
+    <div class="workspace-label">Workspace</div>
+    <div class="workspace-name"><span class="online-dot"></span> Farm Operations <i data-lucide="chevron-down" style="width:14px;margin-left:auto"></i></div>
+  </div>
+
+  <div class="nav-label">OVERVIEW</div>
+  <button class="nav-btn active" data-page="dashboard"><i data-lucide="layout-dashboard"></i> Dashboard</button>
+
+  <div class="nav-label">FIELD OPERATIONS</div>
+  <button class="nav-btn" data-page="farmers"><i data-lucide="users"></i> Farmers <span class="nav-badge" id="navFarmers">0</span></button>
+  <button class="nav-btn" data-page="farms"><i data-lucide="sprout"></i> Farms</button>
+  <button class="nav-btn" data-page="enumerators"><i data-lucide="contact-round"></i> Enumerators</button>
+  <button class="nav-btn" data-page="visits"><i data-lucide="map-pin"></i> Field Visits</button>
+  <button class="nav-btn" data-page="map"><i data-lucide="map"></i> Farm Mapping</button>
+
+  <div class="nav-label">MANAGEMENT</div>
+  <button class="nav-btn" data-page="payments"><i data-lucide="wallet"></i> Payments</button>
+  <button class="nav-btn" data-page="reports"><i data-lucide="chart-no-axes-combined"></i> Reports</button>
+  <button class="nav-btn" data-page="settings"><i data-lucide="settings-2"></i> Settings</button>
+
+  <div class="sidebar-bottom">
+    <button class="nav-btn" data-page="help"><i data-lucide="circle-help"></i> Help & Support</button>
+    <div class="user-mini">
+      <div class="avatar">HA</div>
+      <div><div class="user-name" id="sidebarUser">HIGHTASTE Admin</div><div class="user-role">Workspace preview</div></div>
+      <button class="icon-btn" id="profileBtn" aria-label="Edit profile" style="margin-left:auto;background:transparent;border-color:#ffffff20;color:white"><i data-lucide="ellipsis"></i></button>
+    </div>
+  </div>
+</aside>
+
+<main class="main">
+<header class="topbar">
+  <div style="display:flex;align-items:center;gap:12px">
+    <button class="icon-btn mobile-menu" id="menuToggle" aria-label="Open menu"><i data-lucide="menu"></i></button>
+    <div class="breadcrumb">Workspace <span style="margin:0 7px">/</span> <strong id="breadcrumb">Dashboard</strong></div>
+  </div>
+  <div class="top-actions">
+    <button class="icon-btn" id="helpBtn" aria-label="Help"><i data-lucide="circle-help"></i></button>
+    <button class="icon-btn" id="notifyBtn" aria-label="Notifications"><i data-lucide="bell"></i></button>
+    <div class="top-avatar">HA</div>
+  </div>
+</header>
+
+<div class="content">
+
+<!-- DASHBOARD -->
+<section class="page active" id="page-dashboard">
+  <div class="page-heading">
+    <div><div class="eyebrow">OPERATIONS OVERVIEW</div><h1>Good day, Admin.</h1><p class="page-desc">Monitor field activity, farmer registrations and agricultural operations.</p></div>
+    <button class="btn btn-primary" onclick="openFarmerForm()"><i data-lucide="plus"></i> Register Farmer</button>
+  </div>
+
+  <div class="hero">
+    <div class="hero-copy">
+      <div class="hero-tag"><i data-lucide="leaf" style="width:15px"></i> HIGHTASTE FIELD INTELLIGENCE</div>
+      <h2>Better farm data.<br>Smarter decisions.</h2>
+      <p>A centralized workspace for farmer registration, field enumerators, GPS farm mapping and payment oversight.</p>
+      <div class="hero-actions">
+        <button class="btn btn-lime" onclick="navigate('farmers')"><i data-lucide="users"></i> View Farmers</button>
+        <button class="btn" style="background:#ffffff12;color:white;border-color:#ffffff25" onclick="navigate('reports')"><i data-lucide="chart-no-axes-combined"></i> View Reports</button>
+      </div>
+    </div>
+    <div class="hero-art"><i data-lucide="sprout"></i></div>
+  </div>
+
+  <div class="metrics">
+    <div class="metric"><div class="metric-top"><span class="metric-label">Registered Farmers</span><span class="metric-icon"><i data-lucide="users"></i></span></div><div class="metric-value" id="metricFarmers">0</div><div class="metric-foot">Total farmer records</div></div>
+    <div class="metric"><div class="metric-top"><span class="metric-label">Mapped Farms</span><span class="metric-icon"><i data-lucide="sprout"></i></span></div><div class="metric-value" id="metricFarms">0</div><div class="metric-foot">Farm records captured</div></div>
+    <div class="metric"><div class="metric-top"><span class="metric-label">Active Enumerators</span><span class="metric-icon"><i data-lucide="contact-round"></i></span></div><div class="metric-value" id="metricEnumerators">0</div><div class="metric-foot">Field team members</div></div>
+    <div class="metric"><div class="metric-top"><span class="metric-label">Pending Reviews</span><span class="metric-icon"><i data-lucide="clipboard-check"></i></span></div><div class="metric-value" id="metricPending">0</div><div class="metric-foot">Awaiting administrator review</div></div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Recent Farmer Registrations</div><div class="card-subtitle">Latest records in this browser preview</div></div><button class="text-link" onclick="navigate('farmers')">View all →</button></div>
+      <div class="table-wrap"><table><thead><tr><th>Farmer</th><th>Location</th><th>Status</th></tr></thead><tbody id="recentFarmers"></tbody></table></div>
+    </div>
+    <div class="card">
+      <div class="card-header"><div><div class="card-title">Registration Overview</div><div class="card-subtitle">Current record approval status</div></div><i data-lucide="chart-pie" style="color:var(--green)"></i></div>
+      <div class="card-body" id="approvalOverview"></div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-header"><div><div class="card-title">Quick Actions</div><div class="card-subtitle">Shortcuts to common tasks</div></div></div>
+    <div class="card-body" style="display:flex;gap:10px;flex-wrap:wrap">
+      <button class="btn btn-secondary" onclick="openFarmerForm()"><i data-lucide="user-plus"></i> Register Farmer</button>
+      <button class="btn btn-secondary" onclick="openEnumeratorForm()"><i data-lucide="contact-round"></i> Add Enumerator</button>
+      <button class="btn btn-secondary" onclick="openFarmForm()"><i data-lucide="map-pin"></i> Add Farm</button>
+      <button class="btn btn-secondary" onclick="navigate('reports')"><i data-lucide="file-spreadsheet"></i> Export Reports</button>
+    </div>
+  </div>
+</section>
+
+<!-- FARMERS -->
+<section class="page" id="page-farmers">
+  <div class="page-heading"><div><div class="eyebrow">FIELD OPERATIONS</div><h1>Farmers</h1><p class="page-desc">Manage farmer records, registration details and verification status.</p></div><button class="btn btn-primary" onclick="openFarmerForm()"><i data-lucide="plus"></i> Register Farmer</button></div>
+  <div class="card">
+    <div class="toolbar"><div class="toolbar-left"><div class="searchbox"><i data-lucide="search"></i><input id="farmerSearch" placeholder="Search name, ID, phone or location..."></div><select class="select" id="farmerStatusFilter"><option value="">All statuses</option><option>pending</option><option>approved</option><option>rejected</option></select></div><div class="toolbar-right"><button class="btn btn-secondary" onclick="exportFarmers()"><i data-lucide="download"></i> Export CSV</button><button class="btn btn-secondary" onclick="window.print()"><i data-lucide="printer"></i> Print</button></div></div>
+    <div class="table-wrap"><table><thead><tr><th>Farmer</th><th>Phone</th><th>Location</th><th>Enumerator</th><th>Status</th><th>Actions</th></tr></thead><tbody id="farmersTable"></tbody></table></div>
+  </div>
+</section>
+
+<!-- FARMS -->
+<section class="page" id="page-farms">
+  <div class="page-heading"><div><div class="eyebrow">FIELD OPERATIONS</div><h1>Farm Records</h1><p class="page-desc">Review farm locations, crops, GPS coordinates and verification.</p></div><button class="btn btn-primary" onclick="openFarmForm()"><i data-lucide="plus"></i> Add Farm</button></div>
+  <div class="card"><div class="toolbar"><div class="toolbar-left"><div class="searchbox"><i data-lucide="search"></i><input id="farmSearch" placeholder="Search farm, farmer or village..."></div></div><div class="toolbar-right"><button class="btn btn-secondary" onclick="exportFarms()"><i data-lucide="download"></i> Export CSV</button><button class="btn btn-secondary" onclick="window.print()"><i data-lucide="printer"></i> Print</button></div></div>
+  <div class="table-wrap"><table><thead><tr><th>Farm ID</th><th>Farm Name</th><th>Farmer</th><th>Location</th><th>GPS</th><th>Status</th><th>Actions</th></tr></thead><tbody id="farmsTable"></tbody></table></div></div>
+</section>
+
+<!-- ENUMERATORS -->
+<section class="page" id="page-enumerators">
+  <div class="page-heading"><div><div class="eyebrow">TEAM MANAGEMENT</div><h1>Enumerators</h1><p class="page-desc">Manage field officers and their assigned operational areas.</p></div><button class="btn btn-primary" onclick="openEnumeratorForm()"><i data-lucide="plus"></i> Add Enumerator</button></div>
+  <div class="card"><div class="toolbar"><div class="toolbar-left"><div class="searchbox"><i data-lucide="search"></i><input id="enumeratorSearch" placeholder="Search name, ID or assigned area..."></div></div><div class="toolbar-right"><button class="btn btn-secondary" onclick="exportEnumerators()"><i data-lucide="download"></i> Export CSV</button></div></div>
+  <div class="table-wrap"><table><thead><tr><th>Enumerator</th><th>Phone</th><th>Employee ID</th><th>Assigned State</th><th>Assigned LGA</th><th>Status</th><th>Actions</th></tr></thead><tbody id="enumeratorsTable"></tbody></table></div></div>
+</section>
+
+<!-- FIELD VISITS -->
+<section class="page" id="page-visits">
+  <div class="page-heading"><div><div class="eyebrow">FIELD OPERATIONS</div><h1>Field Visits</h1><p class="page-desc">Track field visits and survey activity.</p></div><button class="btn btn-primary" onclick="openVisitForm()"><i data-lucide="plus"></i> Record Visit</button></div>
+  <div class="card"><div class="toolbar"><div class="toolbar-left"><div class="searchbox"><i data-lucide="search"></i><input id="visitSearch" placeholder="Search location or enumerator..."></div></div><div class="toolbar-right"><button class="btn btn-secondary" onclick="exportVisits()"><i data-lucide="download"></i> Export CSV</button></div></div>
+  <div class="table-wrap"><table><thead><tr><th>Date</th><th>Enumerator</th><th>State / LGA</th><th>Village / Ward</th><th>Farmers Registered</th><th>GPS Coordinates</th></tr></thead><tbody id="visitsTable"></tbody></table></div></div>
+</section>
+
+<!-- MAPPING -->
+<section class="page" id="page-map">
+  <div class="page-heading"><div><div class="eyebrow">GEOSPATIAL INTELLIGENCE</div><h1>Farm Mapping</h1><p class="page-desc">Explore captured coordinates and registered farm locations.</p></div><button class="btn btn-primary" onclick="navigate('farms')"><i data-lucide="map-pin"></i> View Farm Records</button></div>
+  <div class="map-grid" style="margin-bottom:20px"><div class="map-stat"><span>Farms with coordinates</span><strong id="mappedCount">0</strong></div><div class="map-stat"><span>Without coordinates</span><strong id="unmappedCount">0</strong></div><div class="map-stat"><span>Locations recorded</span><strong id="locationsCount">0</strong></div></div>
+  <div class="card"><div class="card-header"><div><div class="card-title">Registered Farm Locations</div><div class="card-subtitle">Select a farm to open its coordinates in a map service.</div></div></div><div class="card-body" id="mapContent"></div></div>
+</section>
+
+<!-- PAYMENTS -->
+<section class="page" id="page-payments">
+  <div class="page-heading"><div><div class="eyebrow">FINANCIAL MANAGEMENT</div><h1>Farmer Payments</h1><p class="page-desc">Track payment requests, approval status and receipt references.</p></div><button class="btn btn-primary" onclick="openPaymentForm()"><i data-lucide="plus"></i> Record Payment</button></div>
+  <div class="notice warning"><strong>Payment records only:</strong> Saving or approving a record here does not transfer money to a bank account. Verify real transfers through your authorized payment provider.</div>
+  <div class="card"><div class="toolbar"><div class="toolbar-left"><div class="searchbox"><i data-lucide="search"></i><input id="paymentSearch" placeholder="Search farmer or payment reference..."></div><select class="select" id="paymentStatusFilter"><option value="">All statuses</option><option>pending</option><option>approved</option><option>processing</option><option>paid</option><option>rejected</option></select></div><div class="toolbar-right"><button class="btn btn-secondary" onclick="exportPayments()"><i data-lucide="download"></i> Export CSV</button></div></div>
+  <div class="table-wrap"><table><thead><tr><th>Reference</th><th>Farmer</th><th>Amount</th><th>Date</th><th>Status</th><th>Receipt / Actions</th></tr></thead><tbody id="paymentsTable"></tbody></table></div></div>
+</section>
+
+<!-- REPORTS -->
+<section class="page" id="page-reports">
+  <div class="page-heading"><div><div class="eyebrow">DATA & ANALYTICS</div><h1>Reports & Exports</h1><p class="page-desc">Download operational records for review and analysis.</p></div></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><div><div class="card-title">Farmer Registration Report</div><div class="card-subtitle">Names, IDs, contact and location details</div></div><i data-lucide="users" style="color:var(--green)"></i></div><div class="card-body"><p class="section-desc">Export farmer registrations as a CSV file that opens in Microsoft Excel or compatible spreadsheet applications.</p><button class="btn btn-primary" onclick="exportFarmers()"><i data-lucide="download"></i> Download Farmer CSV</button></div></div>
+    <div class="card"><div class="card-header"><div><div class="card-title">Farm & GPS Report</div><div class="card-subtitle">Farm records and captured coordinates</div></div><i data-lucide="map-pinned" style="color:var(--green)"></i></div><div class="card-body"><p class="section-desc">Export farm names, farmer references, locations, crops and coordinates.</p><button class="btn btn-primary" onclick="exportFarms()"><i data-lucide="download"></i> Download Farm CSV</button></div></div>
+    <div class="card"><div class="card-header"><div><div class="card-title">Enumerator Report</div><div class="card-subtitle">Field team and assigned areas</div></div><i data-lucide="contact-round" style="color:var(--green)"></i></div><div class="card-body"><p class="section-desc">Download the current enumerator register.</p><button class="btn btn-primary" onclick="exportEnumerators()"><i data-lucide="download"></i> Download Enumerator CSV</button></div></div>
+    <div class="card"><div class="card-header"><div><div class="card-title">Payment Register</div><div class="card-subtitle">Amounts, statuses and receipt numbers</div></div><i data-lucide="wallet" style="color:var(--green)"></i></div><div class="card-body"><p class="section-desc">Download payment records for authorized financial reconciliation.</p><button class="btn btn-primary" onclick="exportPayments()"><i data-lucide="download"></i> Download Payment CSV</button></div></div>
+  </div>
+  <div class="card" style="margin-top:20px"><div class="card-header"><div><div class="card-title">Print Summary</div><div class="card-subtitle">Print the current dashboard or report page.</div></div><button class="btn btn-secondary" onclick="window.print()"><i data-lucide="printer"></i> Print page</button></div></div>
+</section>
+
+<!-- SETTINGS -->
+<section class="page" id="page-settings">
+  <div class="page-heading"><div><div class="eyebrow">WORKSPACE CONFIGURATION</div><h1>Settings</h1><p class="page-desc">Configure the visible workspace and manage local preview data.</p></div></div>
+  <div class="grid-2">
+    <div class="card"><div class="card-header"><div><div class="card-title">Workspace Profile</div><div class="card-subtitle">Display name and contact</div></div></div><div class="card-body">
+      <form id="settingsForm"><div class="form-grid">
+      <div class="field full"><label>Workspace Name</label><input id="settingCompany" value="HIGHTASTE Farm Intelligence" required></div>
+      <div class="field"><label>Administrator Display Name</label><input id="settingAdmin" value="HIGHTASTE Admin" required></div>
+      <div class="field"><label>Contact Email</label><input id="settingEmail" type="email" placeholder="admin@example.com"></div>
+      </div><div class="form-actions"><button class="btn btn-primary" type="submit">Save Display Settings</button></div></form>
+    </div></div>
+    <div class="card"><div class="card-header"><div><div class="card-title">Data & Privacy</div><div class="card-subtitle">Important notes for deployment</div></div></div><div class="card-body">
+      <div class="notice warning">This standalone HTML preview stores records in this browser only. It is not a shared database.</div>
+      <div class="settings-list">
+      <div class="setting-row"><div><div class="setting-title">Supabase Connection</div><div class="setting-desc">Not connected by this standalone HTML file.</div></div><span class="status status-pending">Not connected</span></div>
+      <div class="setting-row"><div><div class="setting-title">Authentication & Roles</div><div class="setting-desc">Must be enforced by Supabase policies and backend checks.</div></div><span class="status status-pending">Required</span></div>
+      <div class="setting-row"><div><div class="setting-title">Offline Sync</div><div class="setting-desc">Requires an offline-capable app workflow.</div></div><span class="status status-notpaid">Not enabled</span></div>
+      <button class="btn btn-secondary" onclick="exportBackup()"><i data-lucide="database"></i> Export Browser Backup</button>
+      <button class="btn btn-danger" onclick="clearDemoData()"><i data-lucide="trash-2"></i> Clear Browser Preview Data</button>
+      </div>
+    </div></div>
+  </div>
+</section>
+
+<!-- HELP -->
+<section class="page" id="page-help">
+  <div class="page-heading"><div><div class="eyebrow">SUPPORT CENTRE</div><h1>Help & Support</h1><p class="page-desc">Learn how to use this workspace.</p></div></div>
+  <div class="card"><div class="card-body">
+    <h3 class="section-title">Getting started</h3><p class="section-desc">Use the sidebar to navigate between farmers, farms, enumerators, visits, mapping, payments and reports.</p>
+    <div class="activity"><div class="activity-icon"><i data-lucide="user-plus"></i></div><div><div class="activity-title">Register farmers</div><div class="activity-meta">Open Farmers and select Register Farmer. Add the farmer's name, contact and location.</div></div></div>
+    <div class="activity"><div class="activity-icon"><i data-lucide="map-pin"></i></div><div><div class="activity-title">Capture farm GPS</div><div class="activity-meta">Add a farm, then use the GPS button when your device permits location access. Verify coordinates before saving.</div></div></div>
+    <div class="activity"><div class="activity-icon"><i data-lucide="file-spreadsheet"></i></div><div><div class="activity-title">Export data</div><div class="activity-meta">Use CSV export buttons to open records in Excel-compatible software.</div></div></div>
+    <div class="activity"><div class="activity-icon"><i data-lucide="shield-check"></i></div><div><div class="activity-title">Before production</div><div class="activity-meta">Connect Supabase, enforce role-based security, configure private photo storage and test backups. Do not store real bank details in the browser preview.</div></div></div>
+  </div></div>
+</section>
+
+<div class="footer">HIGHTASTE FARM INTELLIGENCE · FIELD OPERATIONS PLATFORM · <span id="currentYear"></span></div>
+</div>
+</main>
+</div>
+
+<!-- MODAL -->
+<div class="modal-backdrop" id="modalBackdrop" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+  <div class="modal">
+    <div class="modal-header"><h3 id="modalTitle">Add Record</h3><button class="icon-btn" id="closeModal" aria-label="Close"><i data-lucide="x"></i></button></div>
+    <div class="modal-content" id="modalContent"></div>
+  </div>
+</div>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+"use strict";
+
+/*
+ HIGHTASTE STANDALONE FRONT-END PREVIEW
+ Records are stored in this browser's localStorage.
+ This is NOT the secure multi-user Supabase implementation.
+ Do not store real bank account details in this preview.
+*/
+
+const $ = id => document.getElementById(id);
+const uid = () => Math.random().toString(36).slice(2,8).toUpperCase();
+const today = () => new Date().toISOString().slice(0,10);
+const escapeHTML = value => String(value ?? "").replace(/[&<>"']/g, c => ({
+ "&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"
+}[c]));
+const safeNum = value => Number.isFinite(Number(value)) ? Number(value) : 0;
+
+const DBKEY = "hightaste_preview_v1";
+let data = loadData();
+
+function loadData(){
+ try{
+  const parsed = JSON.parse(localStorage.getItem(DBKEY));
+  if(parsed && Array.isArray(parsed.farmers)) return parsed;
+ }catch(e){}
+ return {farmers:[],farms:[],enumerators:[],visits:[],payments:[]};
+}
+function saveData(){
+ localStorage.setItem(DBKEY,JSON.stringify(data));
+ renderAll();
+}
+function toast(message){
+ $("toast").textContent=message;
+ $("toast").classList.add("show");
+ clearTimeout(toast.timer);
+ toast.timer=setTimeout(()=>$("toast").classList.remove("show"),3500);
+}
+function refreshIcons(){
+ if(window.lucide) window.lucide.createIcons();
+}
+function navigate(page){
+ document.querySelectorAll(".page").forEach(el=>el.classList.remove("active"));
+ const target=$("page-"+page);
+ if(!target){toast("Page not found.");return;}
+ target.classList.add("active");
+ document.querySelectorAll(".nav-btn[data-page]").forEach(btn=>btn.classList.toggle("active",btn.dataset.page===page));
+ $("breadcrumb").textContent=page.charAt(0).toUpperCase()+page.slice(1);
+ $("sidebar").classList.remove("open");
+ window.scrollTo({top:0,behavior:"smooth"});
+ renderAll();
+}
+document.querySelectorAll(".nav-btn[data-page]").forEach(btn=>btn.addEventListener("click",()=>navigate(btn.dataset.page)));
+$("menuToggle").addEventListener("click",()=>$("sidebar").classList.toggle("open"));
+$("closeModal").addEventListener("click",closeModal);
+$("modalBackdrop").addEventListener("click",e=>{if(e.target===$("modalBackdrop"))closeModal();});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal();});
+$("helpBtn").addEventListener("click",()=>navigate("help"));
+$("notifyBtn").addEventListener("click",()=>toast("You are viewing the local preview. Notifications are not connected to a live backend."));
+$("profileBtn").addEventListener("click",()=>navigate("settings"));
+$("currentYear").textContent=new Date().getFullYear();
+
+function openModal(title,html){
+ $("modalTitle").textContent=title;
+ $("modalContent").innerHTML=html;
+ $("modalBackdrop").classList.add("open");
+ refreshIcons();
+}
+function closeModal(){$("modalBackdrop").classList.remove("open");}
+function statusBadge(status){
+ const s=String(status||"pending").toLowerCase();
+ const cls=["approved","paid","pending","processing","rejected","failed","notpaid"].includes(s)?s:"pending";
+ return `<span class="status status-${cls}">${escapeHTML(s.charAt(0).toUpperCase()+s.slice(1))}</span>`;
+}
+function personCell(name,id){
+ const initials=String(name||"N").split(/\s+/).slice(0,2).map(s=>s[0]||"").join("").toUpperCase();
+ return `<div class="person"><div class="person-avatar">${escapeHTML(initials)}</div><div><div class="person-name">${escapeHTML(name)}</div><div class="person-id">${escapeHTML(id)}</div></div></div>`;
+}
+function actionButton(label,icon,onclick){
+ return `<button class="table-action" title="${escapeHTML(label)}" aria-label="${escapeHTML(label)}" onclick="${onclick}"><i data-lucide="${icon}"></i></button>`;
+}
+function locationText(x){return [x.village,x.ward,x.town,x.lga,x.state].filter(Boolean).join(", ")||"—";}
+function csvCell(v){return '"'+String(v??"").replace(/"/g,'""')+'"';}
+function downloadCSV(filename,rows){
+ if(!rows.length){toast("No records to export yet.");return;}
+ const headers=Object.keys(rows[0]);
+ const csv=[headers.map(csvCell).join(","),...rows.map(r=>headers.map(k=>csvCell(Array.isArray(r[k])?r[k].join("; "):r[k])).join(","))].join("\r\n");
+ const blob=new Blob(["\ufeff"+csv],{type:"text/csv;charset=utf-8;"});
+ const a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);a.download=filename;a.click();
+ setTimeout(()=>URL.revokeObjectURL(a.href),1000);
+ toast("CSV report downloaded.");
+}
+function exportFarmers(){downloadCSV("hightaste-farmers.csv",data.farmers);}
+function exportFarms(){downloadCSV("hightaste-farms.csv",data.farms);}
+function exportEnumerators(){downloadCSV("hightaste-enumerators.csv",data.enumerators);}
+function exportVisits(){downloadCSV("hightaste-field-visits.csv",data.visits);}
+function exportPayments(){downloadCSV("hightaste-payments.csv",data.payments);}
+function exportBackup(){
+ const blob=new Blob([JSON.stringify(data,null,2)],{type:"application/json"});
+ const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="hightaste-preview-backup.json";a.click();
+ setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast("Browser backup downloaded.");
+}
+function clearDemoData(){
+ if(!confirm("Delete all HIGHTASTE preview records stored in this browser? This cannot be undone."))return;
+ data={farmers:[],farms:[],enumerators:[],visits:[],payments:[]};saveData();toast("Browser preview records cleared.");
+}
+
+function renderAll(){
+ renderDashboard();renderFarmers();renderFarms();renderEnumerators();renderVisits();renderPayments();renderMap();refreshIcons();
+}
+function renderDashboard(){
+ $("metricFarmers").textContent=data.farmers.length;
+ $("metricFarms").textContent=data.farms.length;
+ $("metricEnumerators").textContent=data.enumerators.filter(e=>e.active!=="No").length;
+ $("metricPending").textContent=data.farmers.filter(f=>f.status==="pending").length+data.farms.filter(f=>f.status==="pending").length;
+ $("navFarmers").textContent=data.farmers.length;
+ const recent=[...data.farmers].reverse().slice(0,5);
+ $("recentFarmers").innerHTML=recent.length?recent.map(f=>`<tr><td>${personCell(f.name,f.id)}</td><td>${escapeHTML([f.lga,f.state].filter(Boolean).join(", ")||"—")}</td><td>${statusBadge(f.status)}</td></tr>`).join(""):`<tr><td colspan="3" class="empty">No farmer records yet. Register your first farmer to begin.</td></tr>`;
+ const total=data.farmers.length||0;
+ const approved=data.farmers.filter(f=>f.status==="approved").length;
+ const pending=data.farmers.filter(f=>f.status==="pending").length;
+ const rejected=data.farmers.filter(f=>f.status==="rejected").length;
+ const progress=(n)=>total?Math.round(n/total*100):0;
+ $("approvalOverview").innerHTML=[
+  ["Approved",approved,"var(--green)"],
+  ["Pending review",pending,"#d7a13c"],
+  ["Rejected",rejected,"var(--red)"]
+ ].map(([label,n,color])=>`<div class="progress-row"><div class="progress-info"><strong>${label}</strong><span>${n} · ${progress(n)}%</span></div><div class="progress-track"><div class="progress-fill" style="width:${progress(n)}%;background:${color}"></div></div></div>`).join("")+`<div style="font-size:10px;color:var(--muted);margin-top:20px">Counts reflect records saved in this browser preview.</div>`;
+}
+function renderFarmers(){
+ const q=($("farmerSearch")?.value||"").toLowerCase();
+ const status=$("farmerStatusFilter")?.value||"";
+ const list=data.farmers.filter(f=>JSON.stringify(f).toLowerCase().includes(q)&&(!status||f.status===status));
+ $("farmersTable").innerHTML=list.length?list.map(f=>`<tr><td>${personCell(f.name,f.id)}</td><td>${escapeHTML(f.phone||"—")}</td><td>${escapeHTML(locationText(f))}</td><td>${escapeHTML(data.enumerators.find(e=>e.id===f.enumeratorId)?.name||"—")}</td><td>${statusBadge(f.status)}</td><td><div class="action-row">${actionButton("View details","eye",`viewFarmer('${f.id}')`)}${actionButton("Edit","pencil",`editFarmer('${f.id}')`)}${f.status==="pending"?actionButton("Approve","check",`approveFarmer('${f.id}')`):""}</div></td></tr>`).join(""):`<tr><td colspan="6" class="empty">No matching farmers found.</td></tr>`;
+}
+function renderFarms(){
+ const q=($("farmSearch")?.value||"").toLowerCase();
+ const list=data.farms.filter(f=>JSON.stringify(f).toLowerCase().includes(q));
+ $("farmsTable").innerHTML=list.length?list.map(f=>`<tr><td><strong>${escapeHTML(f.id)}</strong></td><td>${escapeHTML(f.name)}</td><td>${escapeHTML(data.farmers.find(x=>x.id===f.farmerId)?.name||"Unknown")}</td><td>${escapeHTML(locationText(f))}</td><td>${f.latitude!==""&&f.longitude!==""?`${escapeHTML(f.latitude)}, ${escapeHTML(f.longitude)}`:"—"}</td><td>${statusBadge(f.status)}</td><td><div class="action-row">${actionButton("View location","map-pin",`openFarmMap('${f.id}')`)}${actionButton("Approve","check",`approveFarm('${f.id}')`)}${actionButton("Delete","trash-2",`deleteRecord('farms','${f.id}')`)}</div></td></tr>`).join(""):`<tr><td colspan="7" class="empty">No farms recorded yet.</td></tr>`;
+}
+function renderEnumerators(){
+ const q=($("enumeratorSearch")?.value||"").toLowerCase();
+ const list=data.enumerators.filter(e=>JSON.stringify(e).toLowerCase().includes(q));
+ $("enumeratorsTable").innerHTML=list.length?list.map(e=>`<tr><td>${personCell(e.name,e.id)}</td><td>${escapeHTML(e.phone||"—")}</td><td>${escapeHTML(e.employeeId)}</td><td>${escapeHTML(e.state||"—")}</td><td>${escapeHTML(e.lga||"—")}</td><td>${statusBadge(e.active==="No"?"rejected":"approved")}</td><td><div class="action-row">${actionButton("View details","eye",`viewEnumerator('${e.id}')`)}${actionButton("Delete","trash-2",`deleteRecord('enumerators','${e.id}')`)}</div></td></tr>`).join(""):`<tr><td colspan="7" class="empty">No enumerators added yet.</td></tr>`;
+}
+function renderVisits(){
+ const q=($("visitSearch")?.value||"").toLowerCase();
+ const list=data.visits.filter(v=>JSON.stringify(v).toLowerCase().includes(q));
+ $("visitsTable").innerHTML=list.length?list.map(v=>`<tr><td>${escapeHTML(v.date)}</td><td>${escapeHTML(data.enumerators.find(e=>e.id===v.enumeratorId)?.name||"Unknown")}</td><td>${escapeHTML([v.state,v.lga].filter(Boolean).join(" / "))}</td><td>${escapeHTML([v.village,v.ward].filter(Boolean).join(" / ")||"—")}</td><td>${escapeHTML(v.count)}</td><td>${v.latitude&&v.longitude?`<a target="_blank" rel="noopener" href="https://www.google.com/maps?q=${encodeURIComponent(v.latitude+","+v.longitude)}">Open map ↗</a>`:"—"}</td></tr>`).join(""):`<tr><td colspan="6" class="empty">No field visits recorded yet.</td></tr>`;
+}
+function renderPayments(){
+ const q=($("paymentSearch")?.value||"").toLowerCase();
+ const status=$("paymentStatusFilter")?.value||"";
+ const list=data.payments.filter(p=>JSON.stringify(p).toLowerCase().includes(q)&&(!status||p.status===status));
+ $("paymentsTable").innerHTML=list.length?list.map(p=>`<tr><td><strong>${escapeHTML(p.id)}</strong></td><td>${escapeHTML(data.farmers.find(f=>f.id===p.farmerId)?.name||"Unknown")}</td><td>${escapeHTML(p.currency)} ${safeNum(p.amount).toLocaleString()}</td><td>${escapeHTML(p.date)}</td><td>${statusBadge(p.status)}</td><td><div class="action-row">${actionButton("Print receipt","printer",`printReceipt('${p.id}')`)}${p.status==="pending"?actionButton("Approve record","check",`approvePayment('${p.id}')`):""}${p.status==="approved"?actionButton("Mark as paid","wallet",`markPaymentPaid('${p.id}')`):""}</div></td></tr>`).join(""):`<tr><td colspan="6" class="empty">No payment records found.</td></tr>`;
+}
+function renderMap(){
+ const mapped=data.farms.filter(f=>f.latitude!==""&&f.longitude!==""&&f.latitude!=null&&f.longitude!=null);
+ $("mappedCount").textContent=mapped.length;
+ $("unmappedCount").textContent=data.farms.length-mapped.length;
+ $("locationsCount").textContent=new Set(data.farms.map(f=>[f.state,f.lga,f.village].join("|"))).size;
+ $("mapContent").innerHTML=data.farms.length?`<div class="table-wrap"><table><thead><tr><th>Farm</th><th>Location</th><th>Coordinates</th><th>Map</th></tr></thead><tbody>${data.farms.map(f=>`<tr><td><strong>${escapeHTML(f.name)}</strong><div class="person-id">${escapeHTML(f.id)}</div></td><td>${escapeHTML(locationText(f))}</td><td>${f.latitude!==""&&f.longitude!==""?escapeHTML(f.latitude+", "+f.longitude):"Not captured"}</td><td>${f.latitude!==""&&f.longitude!==""?`<a class="btn btn-secondary btn-small" target="_blank" rel="noopener" href="https://www.google.com/maps?q=${encodeURIComponent(f.latitude+","+f.longitude)}">Open map ↗</a>`:"—"}</td></tr>`).join("")}</tbody></table></div>`:`<div class="map-placeholder"><div><i data-lucide="map-pinned"></i><h3>No farm coordinates yet</h3><p>Add a farm and capture GPS coordinates to see map links here.</p><button class="btn btn-primary" onclick="openFarmForm()">Add First Farm</button></div></div>`;
+}
+["farmerSearch","farmerStatusFilter","farmSearch","enumeratorSearch","visitSearch","paymentSearch","paymentStatusFilter"].forEach(id=>$(id).addEventListener("input",renderAll));
+
+function openFarmerForm(existing=null){
+ const f=existing||{};
+ openModal(existing?"Edit Farmer":"Register New Farmer",`
+ <form id="farmerForm"><div class="form-grid">
+ <div class="field full"><label>Full Name *</label><input name="name" required value="${escapeHTML(f.name||"")}" placeholder="Enter farmer's full name"></div>
+ <div class="field"><label>Phone Number *</label><input name="phone" required value="${escapeHTML(f.phone||"")}" placeholder="+234..."></div>
+ <div class="field"><label>Gender</label><select name="gender"><option value="">Select gender</option>${["Male","Female","Other"].map(x=>`<option ${f.gender===x?"selected":""}>${x}</option>`).join("")}</select></div>
+ <div class="field"><label>State *</label><input name="state" required value="${escapeHTML(f.state||"")}" placeholder="State"></div>
+ <div class="field"><label>Local Government Area *</label><input name="lga" required value="${escapeHTML(f.lga||"")}" placeholder="LGA"></div>
+ <div class="field"><label>Town</label><input name="town" value="${escapeHTML(f.town||"")}"></div>
+ <div class="field"><label>Village</label><input name="village" value="${escapeHTML(f.village||"")}"></div>
+ <div class="field"><label>Ward / Neighbourhood</label><input name="ward" value="${escapeHTML(f.ward||"")}"></div>
+ <div class="field"><label>Farm Size (acres)</label><input name="size" type="number" min="0" step=".01" value="${escapeHTML(f.size||"")}"></div>
+ <div class="field full"><label>Address</label><textarea name="address">${escapeHTML(f.address||"")}</textarea></div>
+ <div class="field full"><label>Crop Types (comma-separated)</label><input name="crops" value="${escapeHTML((f.crops||[]).join(", "))}" placeholder="Maize, Rice, Sorghum"></div>
+ <div class="field full"><label>Assign Enumerator</label><select name="enumeratorId"><option value="">Unassigned</option>${data.enumerators.map(e=>`<option value="${escapeHTML(e.id)}" ${f.enumeratorId===e.id?"selected":""}>${escapeHTML(e.name)} (${escapeHTML(e.employeeId)})</option>`).join("")}</select></div>
+ </div><div class="form-actions"><button class="btn btn-secondary" type="button" onclick="closeModal()">Cancel</button><button class="btn btn-primary" type="submit">${existing?"Save Changes":"Register Farmer"}</button></div></form>`);
+ $("farmerForm").onsubmit=e=>{
+ e.preventDefault();const fd=new FormData(e.target);
+ const item={...f,id:f.id||"HTM-FRM-"+uid(),name:fd.get("name").trim(),phone:fd.get("phone").trim(),gender:fd.get("gender"),state:fd.get("state").trim(),lga:fd.get("lga").trim(),town:fd.get("town").trim(),village:fd.get("village").trim(),ward:fd.get("ward").trim(),size:fd.get("size"),address:fd.get("address").trim(),crops:fd.get("crops").split(",").map(s=>s.trim()).filter(Boolean),enumeratorId:fd.get("enumeratorId"),status:f.status||"pending",createdAt:f.createdAt||new Date().toISOString()};
+ if(existing)data.farmers=data.farmers.map(x=>x.id===existing.id?item:x);else data.farmers.push(item);
+ saveData();closeModal();toast(existing?"Farmer record updated.":"Farmer registered in this browser preview.");
+ };
+}
+function editFarmer(id){const f=data.farmers.find(x=>x.id===id);if(f)openFarmerForm(f);}
+function viewFarmer(id){
+ const f=data.farmers.find(x=>x.id===id);if(!f)return;
+ openModal("Farmer Details",`<div class="notice">Preview record ID: <strong>${escapeHTML(f.id)}</strong></div><div class="form-grid">${[["Full Name",f.name],["Phone",f.phone],["Gender",f.gender],["State",f.state],["LGA",f.lga],["Town",f.town],["Village",f.village],["Ward",f.ward],["Farm Size",f.size],["Crops",(f.crops||[]).join(", ")],["Address",f.address],["Status",f.status]].map(([k,v])=>`<div><div class="field-help">${escapeHTML(k)}</div><div style="font-weight:700;margin:6px 0 13px;overflow-wrap:anywhere">${escapeHTML(v||"—")}</div></div>`).join("")}</div><div class="form-actions"><button class="btn btn-secondary" onclick="closeModal()">Close</button><button class="btn btn-primary" onclick="editFarmer('${f.id}')">Edit Record</button></div>`);
+}
+function approveFarmer(id){const f=data.farmers.find(x=>x.id===id);if(!f)return;if(!confirm("Approve this farmer record in the local preview?"))return;f.status="approved";saveData();toast("Preview status changed to approved.");}
+function openEnumeratorForm(){
+ openModal("Add Enumerator",`<form id="enumForm"><div class="form-grid">
+ <div class="field full"><label>Full Name *</label><input name="name" required></div>
+ <div class="field"><label>Phone *</label><input name="phone" required></div>
+ <div class="field"><label>Employee ID</label><input name="employeeId" placeholder="Auto-generated if blank"></div>
+ <div class="field"><label>Assigned State</label><input name="state"></div>
+ <div class="field"><label>Assigned LGA</label><input name="lga"></div>
+ <div class="field full"><label>Notes</label><textarea name="notes"></textarea></div>
+ </div><div class="notice warning" style="margin-top:17px">This creates a local preview record only. It does not create a secure login account or grant access permissions.</div><div class="form-actions"><button class="btn btn-secondary" type="button" onclick="closeModal()">Cancel</button><button class="btn btn-primary" type="submit">Add Enumerator</button></div></form>`);
+ $("enumForm").onsubmit=e=>{e.preventDefault();const fd=new FormData(e.target);data.enumerators.push({id:"HTM-ENUM-"+uid(),name:fd.get("name").trim(),phone:fd.get("phone").trim(),employeeId:fd.get("employeeId").trim()||"HTM-EMP-"+uid(),state:fd.get("state").trim(),lga:fd.get("lga").trim(),notes:fd.get("notes").trim(),active:"Yes"});saveData();closeModal();toast("Enumerator added to local preview.");};
+}
+function viewEnumerator(id){const e=data.enumerators.find(x=>x.id===id);if(!e)return;openModal("Enumerator Details",`<div class="form-grid">${[["Name",e.name],["Phone",e.phone],["Employee ID",e.employeeId],["State",e.state],["LGA",e.lga],["Notes",e.notes]].map(([k,v])=>`<div><div class="field-help">${escapeHTML(k)}</div><div style="font-weight:700;margin:6px 0 13px">${escapeHTML(v||"—")}</div></div>`).join("")}</div><div class="notice warning">A real enumerator login must be provisioned securely through Supabase Auth and role-based policies.</div><div class="form-actions"><button class="btn btn-secondary" onclick="closeModal()">Close</button></div>`);}
+function openFarmForm(){
+ if(!data.farmers.length){toast("Register a farmer before adding a farm.");navigate("farmers");return;}
+ openModal("Add Farm Record",`<form id="farmForm"><div class="form-grid">
+ <div class="field full"><label>Farm Name *</label><input name="name" required placeholder="e.g. Northern Fields Farm"></div>
+ <div class="field full"><label>Farmer *</label><select name="farmerId" required><option value="">Select farmer</option>${data.farmers.map(f=>`<option value="${escapeHTML(f.id)}">${escapeHTML(f.name)} — ${escapeHTML(f.id)}</option>`).join("")}</select></div>
+ <div class="field"><label>State *</label><input name="state" required></div>
+ <div class="field"><label>LGA *</label><input name="lga" required></div>
+ <div class="field"><label>Town</label><input name="town"></div>
+ <div class="field"><label>Village</label><input name="village"></div>
+ <div class="field"><label>Ward</label><input name="ward"></div>
+ <div class="field"><label>Farm Size (acres)</label><input name="size" type="number" min="0" step=".01"></div>
+ <div class="field"><label>Latitude</label><input id="farmLat" name="latitude" type="number" step="any" min="-90" max="90" placeholder="e.g. 12.0022"></div>
+ <div class="field"><label>Longitude</label><input id="farmLng" name="longitude" type="number" step="any" min="-180" max="180" placeholder="e.g. 8.5919"></div>
+ <div class="field full"><button class="btn btn-secondary" type="button" id="captureGPS"><i data-lucide="crosshair"></i> Capture Current Device GPS</button><div class="field-help">Allow location permission when your browser asks. Check that the coordinates represent the farm.</div></div>
+ <div class="field full"><label>Crop Types</label><input name="crops" placeholder="Rice, Maize..."></div>
+ </div><div class="form-actions"><button class="btn btn-secondary" type="button" onclick="closeModal()">Cancel</button><button class="btn btn-primary" type="submit">Save Farm</button></div></form>`);
+ $("captureGPS").onclick=()=>{
+ if(!navigator.geolocation){toast("Geolocation is not supported by this browser.");return;}
+ toast("Requesting device location permission...");
+ navigator.geolocation.getCurrentPosition(pos=>{$("farmLat").value=pos.coords.latitude.toFixed(7);$("farmLng").value=pos.coords.longitude.toFixed(7);toast("GPS captured. Verify it is the farm location before saving.");},err=>toast("Could not get location. Check permissions and HTTPS, then try again."),{enableHighAccuracy:true,timeout:15000,maximumAge:0});
+ };
+ $("farmForm").onsubmit=e=>{e.preventDefault();const fd=new FormData(e.target);const lat=fd.get("latitude"),lng=fd.get("longitude");if((lat&&!lng)||(!lat&&lng)){toast("Enter both latitude and longitude, or leave both blank.");return;}data.farms.push({id:"HTM-FARM-"+uid(),name:fd.get("name").trim(),farmerId:fd.get("farmerId"),state:fd.get("state").trim(),lga:fd.get("lga").trim(),town:fd.get("town").trim(),village:fd.get("village").trim(),ward:fd.get("ward").trim(),size:fd.get("size"),latitude:lat,longitude:lng,crops:fd.get("crops").split(",").map(s=>s.trim()).filter(Boolean),status:"pending",createdAt:new Date().toISOString()});saveData();closeModal();toast("Farm record saved in this browser preview.");};
+}
+function approveFarm(id){const f=data.farms.find(x=>x.id===id);if(!f)return;if(!confirm("Approve this farm record in the local preview?"))return;f.status="approved";saveData();toast("Farm preview status approved.");}
+function openFarmMap(id){const f=data.farms.find(x=>x.id===id);if(!f)return;if(f.latitude===""||f.longitude===""){toast("No GPS coordinates recorded for this farm.");return;}window.open("https://www.google.com/maps?q="+encodeURIComponent(f.latitude+","+f.longitude),"_blank","noopener");}
+function openVisitForm(){
+ if(!data.enumerators.length){toast("Add an enumerator first.");navigate("enumerators");return;}
+ openModal("Record Field Visit",`<form id="visitForm"><div class="form-grid">
+ <div class="field full"><label>Enumerator *</label><select name="enumeratorId" required><option value="">Select enumerator</option>${data.enumerators.map(e=>`<option value="${escapeHTML(e.id)}">${escapeHTML(e.name)}</option>`).join("")}</select></div>
+ <div class="field"><label>Date *</label><input type="date" name="date" value="${today()}" required></div>
+ <div class="field"><label>State</label><input name="state"></div><div class="field"><label>LGA</label><input name="lga"></div><div class="field"><label>Village</label><input name="village"></div><div class="field"><label>Ward</label><input name="ward"></div>
+ <div class="field"><label>Farmers registered</label><input type="number" min="0" name="count" value="0"></div>
+ <div class="field"><label>Latitude</label><input name="latitude" type="number" step="any"></div><div class="field"><label>Longitude</label><input name="longitude" type="number" step="any"></div>
+ <div class="field full"><label>Notes</label><textarea name="notes"></textarea></div></div><div class="form-actions"><button class="btn btn-secondary" type="button" onclick="closeModal()">Cancel</button><button class="btn btn-primary">Save Visit</button></div></form>`);
+ $("visitForm").onsubmit=e=>{e.preventDefault();const fd=new FormData(e.target);data.visits.push({id:"HTM-VIS-"+uid(),enumeratorId:fd.get("enumeratorId"),date:fd.get("date"),state:fd.get("state"),lga:fd.get("lga"),village:fd.get("village"),ward:fd.get("ward"),count:fd.get("count"),latitude:fd.get("latitude"),longitude:fd.get("longitude"),notes:fd.get("notes")});saveData();closeModal();toast("Field visit saved in local preview.");};
+}
+function openPaymentForm(){
+ if(!data.farmers.length){toast("Register a farmer first.");navigate("farmers");return;}
+ openModal("Record Payment",`<form id="paymentForm"><div class="notice warning">This form creates a payment record only. It does not send money or verify a bank transfer.</div><div class="form-grid">
+ <div class="field full"><label>Farmer *</label><select name="farmerId" required><option value="">Select farmer</option>${data.farmers.map(f=>`<option value="${escapeHTML(f.id)}">${escapeHTML(f.name)} (${escapeHTML(f.id)})</option>`).join("")}</select></div>
+ <div class="field"><label>Amount *</label><input name="amount" type="number" min=".01" step=".01" required></div>
+ <div class="field"><label>Currency</label><select name="currency"><option>NGN</option><option>USD</option></select></div>
+ <div class="field"><label>Payment Date</label><input type="date" name="date" value="${today()}"></div>
+ <div class="field"><label>Method / Reference Note</label><input name="method" placeholder="Bank transfer reference, if verified"></div>
+ </div><div class="form-actions"><button class="btn btn-secondary" type="button" onclick="closeModal()">Cancel</button><button class="btn btn-primary">Save Payment Record</button></div></form>`);
+ $("paymentForm").onsubmit=e=>{e.preventDefault();const fd=new FormData(e.target);data.payments.push({id:"HTM-PAY-"+uid(),receipt:"HTM-RCP-"+uid(),farmerId:fd.get("farmerId"),amount:safeNum(fd.get("amount")),currency:fd.get("currency"),date:fd.get("date")||today(),method:fd.get("method"),status:"pending"});saveData();closeModal();toast("Payment record created as pending; no money was transferred.");};
+}
+function approvePayment(id){const p=data.payments.find(x=>x.id===id);if(!p)return;if(!confirm("Approve this payment record for processing? This will not transfer money."))return;p.status="approved";saveData();toast("Payment record approved. No bank transfer was made.");}
+function markPaymentPaid(id){const p=data.payments.find(x=>x.id===id);if(!p)return;const ref=prompt("Enter the verified external bank/payment provider reference. Do not mark paid without confirming the actual transfer.");if(!ref||!ref.trim())return;p.status="paid";p.method=(p.method?p.method+" | ":"")+"Verified reference: "+ref.trim();p.paidAt=new Date().toISOString();saveData();toast("Preview marked paid. This app has not verified the external transfer.");}
+function printReceipt(id){
+ const p=data.payments.find(x=>x.id===id);if(!p)return;const f=data.farmers.find(x=>x.id===p.farmerId)||{};
+ const win=window.open("","_blank","width=750,height=800");if(!win){toast("Allow pop-ups to print the receipt.");return;}
+ win.document.write(`<!DOCTYPE html><html><head><title>HIGHTASTE Receipt</title><style>body{font:15px Arial;padding:35px;color:#18251f}.head{background:#10251d;color:white;padding:25px;border-radius:12px}h1{margin:0}table{width:100%;margin-top:25px;border-collapse:collapse}td{padding:13px;border-bottom:1px solid #ddd}.label{color:#66736b;width:38%}.note{margin-top:30px;color:#66736b;font-size:12px}</style></head><body><div class="head"><h1>HIGHTASTE</h1><p>Farm Intelligence · Payment Record</p></div><h2>Payment Receipt</h2><table>${[["Receipt number",p.receipt],["Payment reference",p.id],["Farmer",f.name||"Unknown"],["Farmer ID",f.id||p.farmerId],["Amount",p.currency+" "+Number(p.amount).toLocaleString()],["Date",p.date],["Record status",p.status.toUpperCase()],["Reference note",p.method||"—"]].map(([a,b])=>`<tr><td class="label">${escapeHTML(a)}</td><td><strong>${escapeHTML(b)}</strong></td></tr>`).join("")}</table><p class="note">This document is a record generated by the HIGHTASTE browser preview. It is not proof of a completed bank transfer. Confirm payment independently with the authorized payment provider.</p><button onclick="window.print()">Print Receipt</button></body></html>`);
+ win.document.close();
+}
+function deleteRecord(type,id){
+ if(!["farms","enumerators"].includes(type))return;
+ if(!confirm("Delete this record from the local preview?"))return;
+ data[type]=data[type].filter(x=>x.id!==id);saveData();toast("Record deleted from this browser preview.");
+}
+$("settingsForm").onsubmit=e=>{e.preventDefault();const name=$("settingAdmin").value.trim()||"HIGHTASTE Admin";$("sidebarUser").textContent=name;localStorage.setItem("hightaste_preview_settings",JSON.stringify({company:$("settingCompany").value,admin:name,email:$("settingEmail").value}));toast("Display settings saved in this browser.");};
+try{const s=JSON.parse(localStorage.getItem("hightaste_preview_settings")||"{}");if(s.company)$("settingCompany").value=s.company;if(s.admin){$("settingAdmin").value=s.admin;$("sidebarUser").textContent=s.admin;}if(s.email)$("settingEmail").value=s.email;}catch(e){}
+
+renderAll();
+</script>
+</body>
+</html>
